@@ -12,6 +12,7 @@ package m3u8
 */
 
 import (
+	"log"
 	"bytes"
 	"errors"
 	"fmt"
@@ -301,6 +302,16 @@ func decodeLineOfMasterPlaylist(p *MasterPlaylist, state *decodingState, line st
 				state.variant.Name = v
 			}
 		}
+	case !state.tagStreamInf && strings.HasPrefix(line, "#EXTINF:-1,"):
+		state.tagStreamInf = true
+		state.listType = MASTER
+		state.variant = new(Variant)
+		if len(state.alternatives) > 0 {
+			state.variant.Alternatives = state.alternatives
+			state.alternatives = nil
+		}
+		p.Variants = append(p.Variants, state.variant)
+		state.variant.Name = line[11:]
 	case state.tagStreamInf && !strings.HasPrefix(line, "#"):
 		state.tagStreamInf = false
 		state.variant.URI = line
@@ -344,6 +355,7 @@ func decodeLineOfMasterPlaylist(p *MasterPlaylist, state *decodingState, line st
 	case strings.HasPrefix(line, "#"): // unknown tags treated as comments
 		return err
 	}
+			log.Println(err)
 	return err
 }
 
