@@ -14,10 +14,10 @@ package m3u8
 import (
 	"bytes"
 	"errors"
-	"fmt"
+	//"fmt"
 	"math"
 	"strconv"
-	"strings"
+	//"strings"
 	"time"
 )
 
@@ -70,6 +70,25 @@ func (p *MasterPlaylist) ResetCache() {
 }
 
 // Generate output in M3U8 format.
+func (p *MasterPlaylist) Encode() *bytes.Buffer {
+	if p.buf.Len() > 0 {
+		return &p.buf
+	}
+
+	p.buf.WriteString("#EXTM3U\n")
+	for _, pl := range p.Variants {
+		if pl.Name != "" {
+			p.buf.WriteString("#EXTINF:-1,")
+			p.buf.WriteString(pl.Name)
+		}
+		p.buf.WriteRune('\n')
+		p.buf.WriteString(pl.URI)
+		p.buf.WriteRune('\n')
+	}
+
+	return &p.buf
+}
+/*
 func (p *MasterPlaylist) Encode() *bytes.Buffer {
 	if p.buf.Len() > 0 {
 		return &p.buf
@@ -229,6 +248,7 @@ func (p *MasterPlaylist) Encode() *bytes.Buffer {
 
 	return &p.buf
 }
+*/
 
 // Version returns the current playlist version number
 func (p *MasterPlaylist) Version() uint8 {

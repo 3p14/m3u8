@@ -12,7 +12,6 @@ package m3u8
 */
 
 import (
-	"log"
 	"bytes"
 	"errors"
 	"fmt"
@@ -355,7 +354,6 @@ func decodeLineOfMasterPlaylist(p *MasterPlaylist, state *decodingState, line st
 	case strings.HasPrefix(line, "#"): // unknown tags treated as comments
 		return err
 	}
-			log.Println(err)
 	return err
 }
 
